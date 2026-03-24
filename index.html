@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Search Database</title>
+
+<style>
+   body {
+            text-align: center;
+            font-family: "Lato", sans-serif;
+        }
+         button {
+            background-color: #0c5449;
+            color: white;
+            border: 1px solid #0c5449;
+            border-radius: 5px;
+            font-size: 1vw;
+            padding-left: 3vw;
+            padding-right: 3vw;
+            padding-bottom: .2vw;
+            padding-top: .2vw;
+            margin-bottom: .2vw;
+            font-weight: bold;
+        }
+table {
+  border-collapse: collapse;
+  margin-top: 15px;
+  text-align: center;
+  border: 1px solid #0c5449;
+}
+
+th, td {
+ border: 1px solid #0c5449;
+  padding: 8px;
+}
+
+th {
+  background: #f2f2f2;
+}
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<h2>Search Database</h2>
+
+<input type="text" id="searchBox" placeholder="Search name or ID"><br>
+<button onclick="searchDatabase()">Search</button>
+
+<table id="resultsTable" style="margin-left: 45%;">
+<thead>
+<tr>
+<th>Category</th>
+<th>Item</th>
+</tr>
+</thead>
+<tbody></tbody>
+</table>
+
+<script>
+
+// Database stored on the page
+const database = [
+  { name: "Metabolics", id: "Albumin (ALB)" },
+  { name: "Metabolics", id: "Alkaline Phosphatase (ALP)" },
+  { name: "Metabolics", id: "Alanine-Aminotransferase (ALT)" },
+  { name: "Metabolics", id: "Amylase (AMY)" },
+  { name: "Metabolics", id: "Aspartate-Aminotransferase (AST)" },
+  { name: "Metabolics", id: "Direct Bilirubin (DBIL)" },
+  { name: "Metabolics", id: "Total Bilirubin (TBIL)" },
+  { name: "Metabolics", id: "Blood Urea Nitrogen (BUN)" },
+  { name: "Metabolics", id: "Calcium (Ca)" },
+  { name: "Metabolics", id: "Creatine Kinase (CK)" },
+  { name: "Metabolics", id: "Chloride (Cl)" },
+  { name: "Metabolics", id: "Creatine (CRE)" },
+  { name: "Metabolics", id: "C-Reactive Protein (CRP)" },
+  { name: "Metabolics", id: "Gamma-Glutamyl-Transferase (GGT)" },
+  { name: "Metabolics", id: "Glucose (Glu)" },
+  { name: "Metabolics", id: "Potassium (K)" },
+  { name: "Metabolics", id: "Lactate (LAC)" },
+  { name: "Metabolics", id: "Lactate-Dehyrogenase (LDH)" },
+  { name: "Metabolics", id: "Magnesium (Mg)" },
+  { name: "Metabolics", id: "Sodium (Na)" },
+  { name: "Metabolics", id: "Phosphorus (Phos)" },
+  { name: "Metabolics", id: "Total Bicarbonate (tCO<sub>2</sub>)" },
+  { name: "Metabolics", id: "Total Protein (TP)" },
+  { name: "Metabolics", id: "Uric Acid (UA)" },
+  { name: "Metabolics", id: "Cholestoral (CHOL)" },
+  { name: "Metabolics", id: "High Density Lipo Protein (HDL)" },
+  { name: "Metabolics", id: "CHOL/HDL" },
+  { name: "Metabolics", id: "non-HDL" },
+  { name: "Metabolics", id: "Low Density Lipo Protein (LDL)" },
+  { name: "Metabolics", id: "Triglycerides (TRIG)" },
+  { name: "Metabolics", id: "Very Low Density Lipo Protein (VLDL)" },
+  { name: "Metabolics", id: "HbA1c (Afinion 2)" },
+  { name: "Hemoglobin", id: "White Blood Cell (WBC)" },
+  { name: "Hemoglobin", id: "Red Blood Cell (RBC)" },
+  { name: "Hemoglobin", id: "Hemoglobin (HGB)" },
+  { name: "Hemoglobin", id: "Hematocrit (HCT)" },
+  { name: "Hemoglobin", id: "Mean Corpuscular Volume (MCV)" },
+  { name: "Hemoglobin", id: "Mean Corpuscular Hemoglobin (MCH)" },
+  { name: "Hemoglobin", id: "Mean Corpuscular Hemoglobin Concentration (MCHC)" },
+  { name: "Hemoglobin", id: "Red Cell Distribution Width-Standard Deviation (RDW-SD)" },
+  { name: "Hemoglobin", id: "Red Cell Distribution Width-Coefficient of Variation (RDW-CV)" },
+  { name: "Hemoglobin", id: "Platelet Count (PLT)" },
+  { name: "Hemoglobin", id: "Mean Platelet Volume (MPV)" },
+  { name: "Hemoglobin", id: "Neutrophilis (NEUT)" },
+  { name: "Hemoglobin", id: "Lymphocytes (LYMPH)" },
+  { name: "Hemoglobin", id: "Monocytes (MONO)" },
+  { name: "Hemoglobin", id: "Eosinophiles (EO)" },
+  { name: "Hemoglobin", id: "Basophiles (BASO)" },
+  { name: "Hemoglobin", id: "Immature Granulocytes (IG)" },
+  { name: "Cardiac Markers (Pathfast)", id: "Troponin-1" },
+  { name: "Cardiac Markers (Pathfast)", id: "Myoglobin" },
+  { name: "Cardiac Markers (Pathfast)", id: "Creatine Kinase-MB (CK-MB)" },
+  { name: "Cardiac Markers (Pathfast)", id: "D-Dimer" },
+  { name: "Cardiac Markers (Pathfast)", id: "NTproBMP" },
+  { name: "Enzyme-Linked <br>Immunosorbent Assay (ELISA)", id: "Heparin Sulfate (HS)" },
+  { name: "Enzyme-Linked <br>Immunosorbent Assay (ELISA)", id: "Fibinogen Gamma Chain (FGG)" },
+  { name: "Enzyme-Linked <br>Immunosorbent Assay (ELISA)", id: "Hyaluronan Synthase 1" },
+  { name: "Enzyme-Linked <br>Immunosorbent Assay (ELISA)", id: "Growth Differentiation Factor - 15 (GDF-15)" },
+  { name: "Enzyme-Linked <br>Immunosorbent Assay (ELISA)", id: "Plasminogen Activator Inhibitor-1 (PAI-1)" },
+  { name: "Enzyme-Linked <br>Immunosorbent Assay (ELISA)", id: "Pregnancy-associated plasma protein-A (PAPP-A)" },
+  { name: "Enzyme-Linked <br>Immunosorbent Assay (ELISA)", id: "Syndecan - 1 (SD-1)" },
+  { name: "Viral and Proinflammatory Panels", id: "IL-1β" },
+  { name: "Viral and Proinflammatory Panels", id: "IL-6" },
+  { name: "Viral and Proinflammatory Panels", id: "IL-8" },
+  { name: "Viral and Proinflammatory Panels", id: "TNF-α" },
+  { name: "Viral and Proinflammatory Panels", id: "IFN-γ" },
+  { name: "Viral and Proinflammatory Panels", id: "IL-4" },
+  { name: "Viral and Proinflammatory Panels", id: "IL-10" },
+  { name: "Viral and Proinflammatory Panels", id: "IL-5" },
+  { name: "Viral and Proinflammatory Panels", id: "IL-12p70" },
+  { name: "Viral and Proinflammatory Panels", id: "IL-13" },
+  { name: "Viral and Proinflammatory Panels", id: "IL-2" },
+  { name: "Cytokine Panels", id: "GM-CSF" },
+  { name: "Cytokine Panels", id: "IL-12/IL-23p40" },
+  { name: "Cytokine Panels", id: "IL-12/IL-23p40" },
+  { name: "Cytokine Panels", id: "IL-15" },
+  { name: "Cytokine Panels", id: "IL-16" },
+  { name: "Cytokine Panels", id: "IL-17A" },
+  { name: "Cytokine Panels", id: "IL-1α" },
+  { name: "Cytokine Panels", id: "IL-5" },
+  { name: "Cytokine Panels", id: "IL-7" },
+  { name: "Cytokine Panels", id: "VEGF-A" },
+  { name: "Cytokine Panels", id: "IL-17A/F, B, C, D" },
+  { name: "Cytokine Panels", id: "IL-1RA" },
+  { name: "Cytokine Panels", id: "IL-3" },
+  { name: "Cytokine Panels", id: "IL-9 " },
+  { name: "Chemokine Panels", id: "MCP-1" },
+  { name: "Chemokine Panels", id: "MCP-4" },
+  { name: "Chemokine Panels", id: "Eotaxin" },
+  { name: "Chemokine Panels", id: "IP-10" },
+  { name: "Chemokine Panels", id: "MDC" },
+  { name: "Chemokine Panels", id: "Eotaxin-3" },
+  { name: "Chemokine Panels", id: "TARC" },
+  { name: "Chemokine Panels", id: "MIP-1α" },
+  { name: "Chemokine Panels", id: "MIP-1β" },
+  { name: "Chemokine Panels", id: "IL-8" },
+  { name: "Neuroinflammation and Alzheimers Disease", id: "Aβ38 (6E10 or 4G8)" },
+  { name: "Neuroinflammation and Alzheimers Disease", id: "Aβ40 (6E10 or 4G8)" },
+  { name: "Neuroinflammation and Alzheimers Disease", id: "Aβ42 (6E10 or 4G8)" },
+  { name: "Neuroinflammation and Alzheimers Disease", id: "CRP" },
+  { name: "Neuroinflammation and Alzheimers Disease", id: "FGF" },
+  { name: "Neuroinflammation and Alzheimers Disease", id: "ICAM-1" },
+  { name: "Neuroinflammation and Alzheimers Disease", id: "PIGF" },
+  { name: "Neuroinflammation and Alzheimers Disease", id: "SAA" },
+  { name: "Neuroinflammation and Alzheimers Disease", id: "Tie-2" },
+  { name: "Neuroinflammation and Alzheimers Disease", id: "VCAM-1" },
+  { name: "Neuroinflammation and Alzheimers Disease", id: "VEGF-A" },
+  { name: "Neuroinflammation and Alzheimers Disease", id: "VEGF-C" },
+  { name: "Neuroinflammation and Alzheimers Disease", id: "VEGF-D" },
+  
+  
+
+
+
+];
+
+function searchDatabase() {
+
+  const input = document.getElementById("searchBox").value.toLowerCase();
+  const tableBody = document.querySelector("#resultsTable tbody");
+
+  tableBody.innerHTML = "";
+
+  const results = database.filter(item =>
+    item.name.toLowerCase().includes(input) ||
+    item.id.toLowerCase().includes(input)
+  );
+
+  if (results.length === 0) {
+    tableBody.innerHTML = "<tr><td colspan='2'>No results found</td></tr>";
+    return;
+  }
+
+  results.forEach(item => {
+    const row = `<tr>
+      <td>${item.name}</td>
+      <td>${item.id}</td>
+    </tr>`;
+    tableBody.innerHTML += row;
+  });
+
+}
+
+</script>
+
+</body>
+</html>
