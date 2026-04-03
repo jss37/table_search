@@ -44,10 +44,10 @@ th {
 <body>
 
 <h2>Search Database</h2>
-
+<label for="searchBox">Enter search query below</label><br>
 <input type="text" id="searchBox" placeholder="Search name or ID"><br>
 <button onclick="searchDatabase()">Search</button>
-
+<div id="notification-area" aria-live="polite" aria-atomic="true" role="status"></div>
 <table id="resultsTable" style="margin-left: 45%;">
 <thead>
 <tr>
@@ -173,13 +173,24 @@ const database = [
   { name: "Neuroinflammation and Alzheimers Disease", id: "VEGF-D" },
   
   
+  
 
 
 
 ];
 
-function searchDatabase() {
+// Announce messages to screen readers
+function showMessage(message) {
+  const container = document.getElementById('notification-area');
+  container.textContent = message;
+}
 
+// Announce when user types in search box
+document.getElementById("searchBox").addEventListener("input", function () {
+  showMessage("Search query updated: " + this.value);
+});
+
+function searchDatabase() {
   const input = document.getElementById("searchBox").value.toLowerCase();
   const tableBody = document.querySelector("#resultsTable tbody");
 
@@ -192,6 +203,7 @@ function searchDatabase() {
 
   if (results.length === 0) {
     tableBody.innerHTML = "<tr><td colspan='2'>No results found</td></tr>";
+    showMessage("No results found");
     return;
   }
 
@@ -203,6 +215,7 @@ function searchDatabase() {
     tableBody.innerHTML += row;
   });
 
+  showMessage(results.length + " results found");
 }
 
 </script>
